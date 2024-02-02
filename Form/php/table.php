@@ -21,7 +21,7 @@
                 <th>Full Name</th>
                 <th>Mobile No</th>
                 <th>Email</th>
-                <th>Password</th>
+
                 <th>Dob</th>
                 <th>Gender</th>
                 <th>Address</th>
@@ -38,38 +38,41 @@
         }
 
 
-        $sql =  "SELECT user_data.id, user_data.fname, user_data.mobileno,user_data.email,user_data.confirm_passpassword,user_data.dob,user_data.gender,
-        address.address, address.city, address.pincode from user_data 
-        INNER JOIN address
-        on address.user_data_id = user_data";
+
 
 
 
 
 
         // $sql = "SELECT * FROM `user_data`";   // Fetch data from the database
-        $result1 = mysqli_query($con, $sql);
+        try {
+            $sql =  "SELECT user_data.id, user_data.fname, user_data.mobileno,user_data.email,user_data.dob,user_data.gender,
+        address.address, address.city, address.pincode from user_data 
+        INNER JOIN address
+        on address.user_data_id = user_data.id";
+            $result1 = mysqli_query($con, $sql);
+            if ($result1) {
+                while ($row = mysqli_fetch_assoc($result1)) {
+                    echo "<tr>";
+                    echo "<td>" . $row['id'] . "</td>";
+                    echo "<td>" . $row['fname'] . "</td>";
+                    echo "<td>" . $row['mobileno'] . "</td>";
+                    echo "<td>" . $row['email'] . "</td>";
 
-        if ($result1) {
-            while ($row = mysqli_fetch_assoc($result1)) {
-                echo "<tr>";
-                echo "<td>" . $row['id'] . "</td>";
-                echo "<td>" . $row['fname'] . "</td>";
-                echo "<td>" . $row['mobileno'] . "</td>";
-                echo "<td>" . $row['email'] . "</td>";
-                echo "<td>" . $row['confirm_pass'] . "</td>";
-                echo "<td>" . $row['dob'] . "</td>";
-                echo "<td>" . $row['gender'] . "</td>";
-                echo "<td>" . $row['address'] . "</td>";
-                echo "<td>" . $row[''] . "</td>";
-                echo "</tr>";
+                    echo "<td>" . $row['dob'] . "</td>";
+                    echo "<td>" . $row['gender'] . "</td>";
+                    echo "<td>" . $row['address'] . "</td>";
+                    echo "<td>" . $row[''] . "</td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "Error: " . $sql . "<br>" . mysqli_error($con);
             }
-        } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($con);
+        } catch (Exception $e) {
+            echo "Error:" . $e->getMessage();
+            mysqli_close($con);
         }
 
-
-        mysqli_close($con);
         ?>
     </table>
 </body>

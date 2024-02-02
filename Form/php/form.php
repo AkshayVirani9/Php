@@ -14,7 +14,7 @@ $_SESSION["address"] = trim($_POST['address']);
 $_SESSION["city"] = $_POST['city'];
 $_SESSION["state"] = $_POST['state'];
 $_SESSION["pincode"] = $_POST['pincode'];
-$_SESSION["hobbiee"] = $_POST['hobbiee'];
+$_SESSION["hobbiee"] = isset($_POST['hobbiee']) ? $_POST['hobbiee'] : [];
 $_SESSION["otherHobbiee"] = $_POST['otherHobbiee'];
 $_SESSION["educationlevel"] = $_POST['educationlevel'];
 $_SESSION["major"] = $_POST['major'];
@@ -200,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             throw new Exception("Error creating database: " . mysqli_error($conn));
             exit;
         }
-        $result1 = mysqli_query($conn,$sql);
+        $result1 = mysqli_query($conn, $sql);
         if (mysqli_query($conn, $sql)) {
             echo "User data table created successfully<br>";
         } else {
@@ -263,11 +263,16 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         echo "Database created successfully<br>";
 
         // Insert data into user table //
+        try {
+            $hobbies = implode(",", $hobbiee);
 
-        $hobbies = implode(",", $_SESSION['hobbiee']);
-        $sql = "INSERT INTO user_data (fname, mname, lname, dob, gender, email, mobileno, pass, confirm_pass, hobbiee, other_hobbiee)
+            $sql = "INSERT INTO user_data (fname, mname, lname, dob, gender, email, mobileno, pass, confirm_pass, hobbiee, other_hobbiee)
         VALUES ('$firstname', '$middlename', '$lastname', '$datepicker', '$gender', '$email', '$mobileno', '$password', '$cpassword', '$hobbies', '$otherHobbiee')";
-        if (mysqli_query($conn, $sql)) {
+            $result2 = (mysqli_query($conn, $sql));
+        } catch (Exception $e) {
+            echo "Error:" . $e->getMessage();
+        }
+        if ($result2) {
             echo "User record created successfully<br>";
 
 
@@ -300,9 +305,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                             throw new Exception("Error: " . $sql . "<br>" . mysqli_error($conn));
                         }
                     }
-                    
-             header("Location: table.php");                      // Redirect to table.php after successfully inserting all data
-            exit();
+
+                    header("Location: table.php");                      // Redirect to table.php after successfully inserting all data
+                    exit();
                 } else {
                     throw new Exception("Error: " . $sql . "<br>" . mysqli_error($conn));
                 }
@@ -320,4 +325,3 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         }
     }
 }
-?>
